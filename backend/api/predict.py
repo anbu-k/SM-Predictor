@@ -7,15 +7,10 @@ from backend.models.sk_model import StockPredictor
 router = APIRouter()
 predictor = StockPredictor()
 
-@router.post("/train/{ticker}")
-def train_stock_model(ticker: str):
-    """Train model for a given stock ticker"""
-    mae = predictor.train_model(ticker)
-    return {"message": f"Model trained for {ticker}", "mae": mae}
+@router.get("/predict/{ticker}/{period}")
+def predict_price(ticker: str, period: str = "1d"):
+    """Predict stock prices for the next day, week, or month"""
 
-@router.get("/predict/{ticker}")
-def predict_price(ticker: str):
-    """Predict the next day's stock price for the given ticker"""
     try:
         predictor.model = joblib.load(f"data/processed_data/{ticker}_model.pkl")
     except FileNotFoundError:
@@ -23,19 +18,29 @@ def predict_price(ticker: str):
 
     df = predictor.get_stock_data(ticker)
 
-    if len(df) < 2:  # Ensure there's enough data to predict
+    if len(df) < 2:
         return {"error": "Not enough historical data for accurate prediction."}
 
-    next_day = np.array([[df['Day'].max() + 1]])
-    predicted_price = predictor.model.predict(next_day)[0]
+    # Get last day in dataset
+    last_day = df["Day"].max()
+    last_close = df["Close"].iloc[-1]
 
-    # Add a correction factor based on recent trends
-    last_close = df['Close'].iloc[-1]
-    predicted_price = (predicted_price + last_close) / 2  # Averaging with last close price
+    # Define number of days to predict
+    days_to_predict = {"1d": 1, "1w": 7, "1m": 30}.get(period, 1)
+    
+    future_days = np.arange(last_day + 1, last_day + days_to_predict + 1).reshape(-1, 1)
+    predictions = predictor.model.predict(future_days)
+
+    # Adjust predictions based on last close price
+    predictions = [(p + last_close) / 2 for p in predictions]
+    
+    # Generate future dates
+    future_dates = pd.date_range(df["Date"].iloc[-1] + pd.Timedelta(days=1), periods=days_to_predict)
 
     return {
         "ticker": ticker,
-        "predicted_price": round(predicted_price, 2),
+        "predictions": [round(p, 2) for p in predictions],
+        "future_dates": [str(d) for d in future_dates],
         "last_close_price": round(last_close, 2),
-        "prediction_date": str(df["Date"].iloc[-1] + pd.Timedelta(days=1))  # Convert date to string
+        "period": period
     }
