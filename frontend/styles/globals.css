@@ -2,7 +2,7 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #5e5a5a;
+    background-color: #5246b9;
     text-align: center;
 }
 input {
@@ -13,3 +13,14 @@ button {
     padding: 10px 15px;
     cursor: pointer;
 }
+
+html {
+    overflow-y: scroll; 
+  }
+
+.no-scroll {
+    overflow-y: hidden !important;
+  }
+  
+
+  

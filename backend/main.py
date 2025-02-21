@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from backend.api import predict, stock_api  # Include stock_api
 from backend.services.fetch_stock import get_stock_data
+from backend.services import sentiment
 
 app = FastAPI()
 
@@ -16,7 +17,8 @@ app.add_middleware(
 
 # Include API routes
 app.include_router(predict.router, prefix="/api")
-app.include_router(stock_api.router, prefix="/api")  # ✅ Include stock API route
+app.include_router(stock_api.router, prefix="/api")
+app.include_router(sentiment.router, prefix="/api") 
 
 @app.get("/")
 def root():

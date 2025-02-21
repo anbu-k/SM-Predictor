@@ -6,6 +6,7 @@ const Plot = dynamic(() => import("react-plotly.js"), { ssr: false });
 
 export default function Predictor() {
     const [ticker, setTicker] = useState("");
+    const [displayedTicker, setDisplayedTicker] = useState("");
     const [predictions, setPredictions] = useState([]);
     const [futureDates, setFutureDates] = useState([]);
     const [lastClose, setLastClose] = useState(null);
@@ -25,6 +26,7 @@ export default function Predictor() {
             return;
         }
         setError(null);
+        setDisplayedTicker(ticker);
     
         try {
             const response = await fetch(`http://127.0.0.1:8000/api/predict/${ticker}/${selectedPeriod}`);
@@ -52,12 +54,12 @@ export default function Predictor() {
     return (
         <div style={{ textAlign: "center", marginTop: "0px", color: "white" }}>
             <Navbar />
-            <h1>Stock Price Predictions 📈</h1>
+            <h1>Stock Price Predictions </h1>
             <input
                 type="text"
                 value={ticker}
                 onChange={(e) => setTicker(e.target.value.toUpperCase())}
-                placeholder="Enter stock ticker (e.g., AAPL)"
+                placeholder="Enter a Stock Ticker "
                 style={{ padding: "10px", fontSize: "16px", marginRight: "10px" }}
             />
             <button onClick={() => fetchPrediction()} style={{ padding: "10px", fontSize: "16px" }}>
@@ -68,7 +70,7 @@ export default function Predictor() {
 
             {predictions.length > 0 && (
                 <div style={{ marginTop: "30px" }}>
-                    <h2>{ticker} Stock Prediction ({selectedLabel})</h2>
+                    <h2>{displayedTicker} Stock Prediction ({selectedLabel})</h2>
                     <Plot
                         data={[
                             {
@@ -90,7 +92,7 @@ export default function Predictor() {
                             }
                         ]}
                         layout={{
-                            title: `${ticker} Stock Prediction Trend`,
+                            title: `${displayedTicker} Stock Prediction Trend`,
                             xaxis: { title: "Date", type: "date" },
                             yaxis: { title: "Stock Price (USD)" },
                             width: 900,

@@ -1,15 +1,15 @@
 import { useState } from "react";
 import dynamic from "next/dynamic";
-import Navbar from "../components/navbar.js"; 
+import Navbar from "../components/navbar.js";
 
 const Plot = dynamic(() => import("react-plotly.js"), { ssr: false });
 
 export default function Home() {
-  const [ticker, setTicker] = useState(""); 
+  const [ticker, setTicker] = useState("");
   const [stockData, setStockData] = useState(null);
   const [error, setError] = useState(null);
-  const [period, setPeriod] = useState("1y"); 
-  const [selectedLabel, setSelectedLabel] = useState("Last 1 Year"); 
+  const [period, setPeriod] = useState("1y");
+  const [selectedLabel, setSelectedLabel] = useState("Last 1 Year");
   const [loading, setLoading] = useState(false);
 
   const timeOptions = {
@@ -19,6 +19,13 @@ export default function Home() {
     "1m": "Last 1 Month",
     "1w": "Last 1 Week",
     "1d": "Last 1 Day",
+  };
+
+  const handleTimeChange = async (newPeriod) => {
+    setPeriod(newPeriod);
+    setSelectedLabel(timeOptions[newPeriod]);
+
+    await fetchStockData(newPeriod);
   };
 
   const fetchStockData = async (selectedPeriod = period) => {
@@ -36,42 +43,59 @@ export default function Home() {
       const data = await response.json();
       if (data.error) throw new Error(data.error);
 
-      setStockData(data);
+      // Update ALL stock data fields, not just the chart data
+      setStockData({
+        company_name: data.company_name,
+        ticker: data.ticker,
+        market_cap: data.market_cap,
+        current_price: data.current_price,
+        volume: data.volume,
+        dates: data.dates,
+        open: data.open,
+        high: data.high,
+        low: data.low,
+        close: data.close,
+      });
     } catch (err) {
       setError("Stock not found or invalid time period.");
+      setStockData(null);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleTimeChange = async (newPeriod) => {
-    setPeriod(newPeriod);
-    setSelectedLabel(timeOptions[newPeriod]); 
-    await fetchStockData(newPeriod); 
-  };
-
   return (
-    <div style={{ textAlign: "center", marginTop: "0px", color: "white" }}>
+    <div
+      style={{
+        textAlign: "center",
+        marginTop: "0px",
+        color: "white",
+        overflowy: "hidden",
+      }}
+    >
       <Navbar /> {}
       <h1>Historical & Current Stock Info.</h1>
       <input
-        style={{ marginTop: "20px" }}
         type="text"
         value={ticker}
         onChange={(e) => setTicker(e.target.value.toUpperCase())}
-        placeholder="Enter stock ticker (e.g., TSLA)"
+        placeholder="Enter a Stock Ticker"
+        style={{ padding: "10px", fontSize: "16px", marginRight: "10px" }}
       />
-      <button onClick={() => fetchStockData()}>Fetch Data</button>
-
+      <button
+        onClick={() => fetchStockData()}
+        style={{ padding: "10px", fontSize: "16px" }}
+      >
+        Fetch Data
+      </button>
       {error && <p style={{ color: "red" }}>{error}</p>}
-
       {stockData && (
         <div
           style={{
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            marginTop: "10px",
+            width: "100%",
           }}
         >
           <h2 style={{ marginBottom: "5px" }}>
@@ -79,12 +103,15 @@ export default function Home() {
           </h2>
 
           <p style={{ margin: "3px 0", fontSize: "15px" }}>
-            <strong>Market Cap:</strong> ${stockData.market_cap?.toLocaleString()}
+            <strong>Market Cap:</strong> $
+            {stockData.market_cap?.toLocaleString()}
           </p>
           <p style={{ margin: "3px 0", fontSize: "15px" }}>
             <strong>Current Price:</strong> ${stockData.current_price}
           </p>
-          <p style={{ margin: "3px 0", fontSize: "15px", marginBottom:"20px" }}>
+          <p
+            style={{ margin: "3px 0", fontSize: "15px", marginBottom: "20px" }}
+          >
             <strong>Volume:</strong> {stockData.volume.toLocaleString()}
           </p>
 
@@ -142,8 +169,11 @@ export default function Home() {
           </div>
         </div>
       )}
-
-      {loading && <p>Loading stock data...</p>}
+      {loading ? (
+        <div style={{ minHeight: "30px" }}>
+          <p>Loading stock data...</p>
+        </div>
+      ) : null}
     </div>
   );
 }

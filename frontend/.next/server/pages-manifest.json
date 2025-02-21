@@ -3,5 +3,6 @@
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
   "/": "pages/index.js",
-  "/predictor": "pages/predictor.js"
+  "/predictor": "pages/predictor.js",
+  "/disclaimer": "pages/disclaimer.js"
 }

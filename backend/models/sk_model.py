@@ -1,71 +1,128 @@
 import yfinance as yf
 import numpy as np
 import pandas as pd
-from sklearn.linear_model import LinearRegression
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_absolute_error
-import joblib  
+import joblib
 
 class StockPredictor:
     def __init__(self):
-        self.model = LinearRegression()
-
-    def get_stock_data(self, ticker, period="6mo"):
-        """Fetch stock data from yfinance and prepare for training"""
+        self.model = RandomForestRegressor(n_estimators=100, random_state=42)
+        self.scaler = StandardScaler()
+        
+    def get_stock_data(self, ticker, period="1y"):
+        """Fetch stock data and create technical indicators"""
         stock = yf.Ticker(ticker)
         df = stock.history(period=period)
-        df = df[['Close']].reset_index()
-        df['Day'] = np.arange(len(df))  # Converts dates to numerical values
+        
+        # Calculate technical indicators
+        df['MA5'] = df['Close'].rolling(window=5).mean()
+        df['MA20'] = df['Close'].rolling(window=20).mean()
+        df['RSI'] = self.calculate_rsi(df['Close'])
+        df['MACD'] = self.calculate_macd(df['Close'])
+        df['Volatility'] = df['Close'].rolling(window=20).std()
+        df['Price_Change'] = df['Close'].pct_change()
+        
+        # Create target variable (next day's price)
+        df['Target'] = df['Close'].shift(-1)
+        
+        # Drop any rows with NaN values
+        df = df.dropna()
+        
         return df
-
+    
+    def calculate_rsi(self, prices, period=14):
+        """Calculate Relative Strength Index"""
+        delta = prices.diff()
+        gain = (delta.where(delta > 0, 0)).rolling(window=period).mean()
+        loss = (-delta.where(delta < 0, 0)).rolling(window=period).mean()
+        rs = gain / loss
+        return 100 - (100 / (1 + rs))
+    
+    def calculate_macd(self, prices, fast=12, slow=26):
+        """Calculate MACD (Moving Average Convergence Divergence)"""
+        exp1 = prices.ewm(span=fast, adjust=False).mean()
+        exp2 = prices.ewm(span=slow, adjust=False).mean()
+        return exp1 - exp2
+        
+    def prepare_features(self, df):
+        """Prepare feature matrix for training"""
+        features = ['MA5', 'MA20', 'RSI', 'MACD', 'Volatility', 'Price_Change', 'Close']
+        X = df[features]
+        y = df['Target']
+        
+        # Scale features
+        X_scaled = self.scaler.fit_transform(X)
+        return X_scaled, y
+    
     def train_model(self, ticker):
-        """Train a model for the given stock ticker"""
+        """Train model with technical indicators"""
         df = self.get_stock_data(ticker)
-
-        # Ensures there is enough data to train on
-        if len(df) < 10:
-            print(f"Skipping {ticker} due to insufficient data.")
-            return None
-
-        # Prepares data
-        X = df[['Day']]
-        y = df['Close']
-
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-        # Checks if there are NaN values in the dataset
-        if np.isnan(y_train).any() or np.isnan(y_test).any():
-            print(f"Skipping {ticker} due to NaN values in dataset.")
-            return None  # Skip training for this stock
-
-        # Trains model
+        
+        if len(df) < 60:  # Need enough data for meaningful technical indicators
+            return {"error": "Insufficient historical data"}
+            
+        X_scaled, y = self.prepare_features(df)
+        
+        # Split data
+        X_train, X_test, y_train, y_test = train_test_split(
+            X_scaled, y, test_size=0.2, random_state=42
+        )
+        
+        # Train model
         self.model.fit(X_train, y_train)
-
-        # Makes predictions
+        
+        # Calculate accuracy
         y_pred = self.model.predict(X_test)
-
-        # Checks for NaN in predictions
-        if np.isnan(y_pred).any():
-            print(f"Skipping {ticker} due to NaN values in predictions.")
-            return None
-
-        # Calculates Mean Absolute Error (MAE)
         mae = mean_absolute_error(y_test, y_pred)
-
-        # Saves trained model
-        joblib.dump(self.model, f"data/processed_data/{ticker}_model.pkl")
-
-        return mae
-
-    def predict_price(self, ticker):
-        """Load the trained model and predict the next day's price"""
+        
+        # Save model and scaler
+        joblib.dump((self.model, self.scaler), f"data/processed_data/{ticker}_model.pkl")
+        
+        return {"mae": mae}
+    
+    def predict_price(self, ticker, days_ahead=30):
+        """Make predictions for multiple days ahead"""
         try:
-            self.model = joblib.load(f"data/processed_data/{ticker}_model.pkl")
+            self.model, self.scaler = joblib.load(f"data/processed_data/{ticker}_model.pkl")
         except FileNotFoundError:
-            return {"error": "Model not trained yet, please train first."}
-
-        df = self.get_stock_data(ticker)
-        next_day = np.array([[df['Day'].max() + 1]])
-        predicted_price = self.model.predict(next_day)[0]
-
-        return {"ticker": ticker, "predicted_price": round(predicted_price, 2)}
+            return {"error": "Model not trained yet"}
+            
+        # Get recent data
+        df = self.get_stock_data(ticker, period="6mo")
+        
+        predictions = []
+        last_data = df.iloc[-1:]  # Start with most recent day
+        
+        # Make sequential predictions
+        for _ in range(days_ahead):
+            # Prepare features
+            features = ['MA5', 'MA20', 'RSI', 'MACD', 'Volatility', 'Price_Change', 'Close']
+            X = last_data[features]
+            X_scaled = self.scaler.transform(X)
+            
+            # Predict next day
+            pred = self.model.predict(X_scaled)[0]
+            predictions.append(pred)
+            
+            # Update last_data for next prediction
+            new_row = last_data.copy()
+            new_row['Close'] = pred
+            # Update technical indicators for next prediction
+            # (simplified for demonstration)
+            new_row['Price_Change'] = (pred - last_data['Close'].iloc[0]) / last_data['Close'].iloc[0]
+            new_row['MA5'] = pred  # Simplified
+            new_row['MA20'] = pred  # Simplified
+            new_row['RSI'] = last_data['RSI'].iloc[0]  # Simplified
+            new_row['MACD'] = last_data['MACD'].iloc[0]  # Simplified
+            new_row['Volatility'] = last_data['Volatility'].iloc[0]  # Simplified
+            
+            last_data = new_row
+            
+        return {
+            "ticker": ticker,
+            "predictions": predictions,
+            "last_close": df['Close'].iloc[-1]
+        }
