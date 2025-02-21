@@ -17,6 +17,6 @@ Stock Predictor is a web application that allows users to **fetch stock market d
 -  Stock Price Prediction
   - Uses a trained Random Forest Regression model to forecast stock prices based on historical data and technical indicators such as Moving Averages (MA5, MA20), RSI, MACD, and Volatility.
   - Supports multiple prediction timeframes: **Next 1 Day, Next 1 Week, Next 1 Month**.
-  - Visualizes trends using ** Plotly interactive charts**.
+  - Visualizes trends using **Plotly interactive charts**.
 
 
