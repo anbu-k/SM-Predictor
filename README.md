@@ -20,3 +20,6 @@ Stock Predictor is a web application that allows users to **fetch stock market d
   - Visualizes trends using **Plotly interactive charts**.
 
 
+![SMPH](https://github.com/user-attachments/assets/c22ddc52-f48c-4667-83e4-b7ea2866218e)
+![SMPP](https://github.com/user-attachments/assets/106d44c0-c82d-42d4-98ae-a480486e531a)
+![SMPN](https://github.com/user-attachments/assets/33e65ca8-d47f-4fc7-ac5b-832016ec4e8e)
