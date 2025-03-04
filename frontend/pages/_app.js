@@ -6,7 +6,7 @@ export default function MyApp({ Component, pageProps }) {
     const router = useRouter();
 
     useEffect(() => {
-        // Hide scrollbar on Home, Predictor, and Disclaimer pages
+        // Hides scrollbar
         if (["/", "/predictor", "/disclaimer"].includes(router.pathname)) {
             document.documentElement.classList.add("no-scroll");
         } else {

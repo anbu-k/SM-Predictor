@@ -7,7 +7,7 @@ export default function News() {
   const [topStories, setTopStories] = useState([]);
   const [error, setError] = useState(null);
 
-  // Fetch top stories on page load
+  // Fetches top stories on page load
   useEffect(() => {
     fetchTopStories();
   }, []);
@@ -61,7 +61,7 @@ export default function News() {
           paddingTop: "20px",
         }}
       >
-        {/* Top Stories Section */}
+        {/* Top Stories */}
         <div
           style={{
             background: "#222",
@@ -107,7 +107,7 @@ export default function News() {
                       fontWeight: "bold",
                       textDecoration: "underline",
                       display: "block",
-                      height: "50px" /* Fixed height for uniformity */,
+                      height: "50px" ,
                     }}
                   >
                     {article.title}

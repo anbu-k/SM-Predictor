@@ -33,12 +33,12 @@ export default function Predictor() {
             const data = await response.json();
             if (data.error) throw new Error(data.error);
     
-            setPredictions(data.predictions || []); // Ensure predictions is always an array
+            setPredictions(data.predictions || []); // predictions is always an array
             setFutureDates(data.future_dates || []);
             setLastClose(data.last_close_price || null);
         } catch (err) {
             setError("Stock not found or model not trained.");
-            setPredictions([]); // Set to an empty array to avoid undefined error
+            setPredictions([]); // Sets to an empty array to avoid undefined error
             setFutureDates([]);
             setLastClose(null);
         }
@@ -100,7 +100,7 @@ export default function Predictor() {
                         }}
                     />
                     
-                    {/* Centered Time Range Dropdown */}
+                    {}
                     <div style={{ marginTop: "15px", textAlign: "center" }}>
                         <label htmlFor="timeRange">
                             <strong>Select Prediction Range:</strong>

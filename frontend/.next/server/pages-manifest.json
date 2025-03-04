@@ -2,6 +2,9 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
+  "/trading": "pages/trading.js",
   "/": "pages/index.js",
-  "/predictor": "pages/predictor.js"
+  "/news": "pages/news.js",
+  "/predictor": "pages/predictor.js",
+  "/disclaimer": "pages/disclaimer.js"
 }

@@ -43,7 +43,7 @@ export default function Home() {
       const data = await response.json();
       if (data.error) throw new Error(data.error);
 
-      // Update ALL stock data fields, not just the chart data
+      // Updates ALL stock data fields
       setStockData({
         company_name: data.company_name,
         ticker: data.ticker,

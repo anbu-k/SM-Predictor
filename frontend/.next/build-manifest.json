@@ -27,10 +27,25 @@
       "static/chunks/main.js",
       "static/chunks/pages/_error.js"
     ],
+    "/disclaimer": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/disclaimer.js"
+    ],
+    "/news": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/news.js"
+    ],
     "/predictor": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
       "static/chunks/pages/predictor.js"
+    ],
+    "/trading": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/trading.js"
     ]
   },
   "ampFirstPages": []
