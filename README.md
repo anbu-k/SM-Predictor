@@ -2,6 +2,27 @@
 
 Stock Predictor is a web application that allows users to **fetch stock market data, view historical trends, analyze stock sentiment from news, and generate stock price predictions** using machine learning models. **Currently fetching from 47 of the top stock tickers.**
 
+## Usage
+
+### **Backend Setup**
+1. **Activate Virtual Environment**  
+   venv\scripts\activate
+2. Train the Machine Learning Model
+python -m backend.models.train
+
+3. Run the Backend Server
+4. 
+uvicorn backend.main:app --reload
+
+The API will be accessible at: http://127.0.0.1:8000/
+
+Frontend Setup
+1. Start the Frontend
+
+npm run dev
+
+The web application will be accessible at: http://localhost:3000/ ** 
+
 ##  Features
 
 ### Historical & Current Stock Data
