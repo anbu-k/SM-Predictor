@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import Navbar from "../components/navbar";
 
 export default function Trading() {
-  // Load initial state from local storage or use defaults
+  // Loads initial state from local storage or use defaults
   const [balance, setBalance] = useState(100000);
   const [portfolio, setPortfolio] = useState([]);
   const [ticker, setTicker] = useState("");
@@ -11,7 +11,7 @@ export default function Trading() {
   const [error, setError] = useState(null);
   const [history, setHistory] = useState([]);
 
-  // Load state from local storage on component mount (client-side only)
+  // Loads state from local storage on component mount (client)
   useEffect(() => {
     if (typeof window !== "undefined") {
       const savedBalance = Number(localStorage.getItem("balance")) || 100000;
@@ -25,7 +25,7 @@ export default function Trading() {
     }
   }, []);
 
-  // Save state to local storage whenever it changes
+  // Saves state to local storage whenever it changes
   useEffect(() => {
     if (typeof window !== "undefined") {
       localStorage.setItem("balance", balance);
@@ -44,7 +44,7 @@ export default function Trading() {
     }
   }, [history]);
 
-  // Calculate live balance (cash + stock value)
+  // Calculates live balance (cash + stock value)
   const liveBalance = portfolio.reduce((acc, stock) => {
     const currentPrice = stockPrices[stock.ticker] || stock.price;
     return acc + currentPrice * stock.quantity;
@@ -62,7 +62,7 @@ export default function Trading() {
     }
   };
 
-  // Fetch stock prices for all stocks in the portfolio
+  // Fetches stock prices for all stocks in the portfolio
   useEffect(() => {
     if (portfolio.length === 0) return;
 
@@ -101,7 +101,7 @@ export default function Trading() {
     return () => clearInterval(interval);
   }, [portfolio]);
 
-  // Fetch stock price for the current ticker
+  // Fetches stock price for the current ticker
   useEffect(() => {
     if (!ticker) return;
     fetchStockPrice();
@@ -244,9 +244,9 @@ export default function Trading() {
   return (
     <div style={{ textAlign: "center", color: "white" }}>
       <Navbar />
-      <h1>Mock Trade</h1>
+      <h1>Mock Trader</h1>
       <h2 style={{ marginTop: "40px" }}>
-        Your Current Balance:&nbsp;
+        Available Spending Balance:&nbsp;
         <span style={{ color: "lightgreen" }}>${balance.toLocaleString()}</span>
       </h2>
       <h2>
@@ -255,11 +255,15 @@ export default function Trading() {
           ${liveBalance.toLocaleString()}
         </span>
       </h2>
-      <h2 style={{ marginTop: "20px" }}>Total Portfolio P/L</h2>
-      <h3 style={{ color: totalPL >= 0 ? "lightgreen" : "red" }}>
-        {totalPL >= 0 ? `+${totalPL}` : totalPL} USD
-      </h3>
-
+      <h2>
+        Balance Change:&nbsp;
+        <span style={{ color: liveBalance >= 100000 ? "lightgreen" : "red" }}>
+          {liveBalance >= 100000
+            ? `+${(liveBalance - 100000).toLocaleString()}`
+            : `-${(100000 - liveBalance).toLocaleString()}`}{" "}
+          USD
+        </span>
+      </h2>
       <input
         type="text"
         placeholder="Enter Stock Ticker"
@@ -358,6 +362,10 @@ export default function Trading() {
           })}
         </tbody>
       </table>
+      <h2 style={{ marginTop: "20px" }}>Total Portfolio P/L</h2>
+      <h3 style={{ color: totalPL >= 0 ? "lightgreen" : "red" }}>
+        {totalPL >= 0 ? `+${totalPL}` : totalPL} USD
+      </h3>
 
       <h2 style={{ marginTop: "80px" }}>Transaction History</h2>
       <ul style={{ listStyleType: "none", padding: 0 }}>
