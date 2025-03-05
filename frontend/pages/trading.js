@@ -6,9 +6,55 @@ export default function Trading() {
   const [portfolio, setPortfolio] = useState([]);
   const [ticker, setTicker] = useState("");
   const [quantity, setQuantity] = useState(1);
-  const [stockPrice, setStockPrice] = useState(null);
+  const [stockPrices, setStockPrices] = useState({});
   const [error, setError] = useState(null);
   const [history, setHistory] = useState([]);
+
+  useEffect(() => {
+    // only starts an interval if portfolio has stocks
+    if (portfolio.length === 0) return;
+
+    // fetches prices for all stocks in portfolio
+    const fetchAllStockPrices = async () => {
+      const pricePromises = portfolio.map(async (stock) => {
+        try {
+          const response = await fetch(
+            `http://127.0.0.1:8000/api/stock/${stock.ticker}/1d`
+          );
+          const data = await response.json();
+          return { ticker: stock.ticker, price: Number(data.current_price) };
+        } catch (err) {
+          console.error(`Error fetching price for ${stock.ticker}:`, err);
+          return null;
+        }
+      });
+
+      try {
+        const results = await Promise.all(pricePromises);
+        const validResults = results.filter(result => result !== null);
+        
+        // Updates stockPrices with new prices
+        setStockPrices(prev => {
+          const newPrices = {...prev};
+          validResults.forEach(result => {
+            newPrices[result.ticker] = result.price;
+          });
+          return newPrices;
+        });
+      } catch (err) {
+        console.error("Error updating stock prices:", err);
+      }
+    };
+
+    // The initial fetch
+    fetchAllStockPrices();
+
+    // Set up interval to fetch prices every 5 seconds
+    const interval = setInterval(fetchAllStockPrices, 5000);
+
+    // Cleans interval when component unmounts or portfolio becomes empty
+    return () => clearInterval(interval);
+  }, [portfolio]);
 
   useEffect(() => {
     if (!ticker) return;
@@ -25,34 +71,55 @@ export default function Trading() {
       );
       const data = await response.json();
       if (data.error) throw new Error(data.error);
-      setStockPrice(Number(data.current_price));
+
+      setStockPrices((prev) => ({
+        ...prev,
+        [ticker]: Number(data.current_price),
+      }));
       setError(null);
     } catch (err) {
       setError("Stock not found.");
-      setStockPrice(null);
+      setStockPrices((prev) => {
+        const updated = { ...prev };
+        delete updated[ticker];
+        return updated;
+      });
     }
   };
 
   const buyStock = () => {
-    if (!stockPrice) return;
-    const totalCost = stockPrice * quantity;
+    const currentStockPrice = stockPrices[ticker];
+    if (!currentStockPrice) return;
+
+    const totalCost = currentStockPrice * quantity;
     if (balance >= totalCost) {
       setBalance(balance - totalCost);
       const existingStock = portfolio.find((stock) => stock.ticker === ticker);
       if (existingStock) {
-        existingStock.quantity += quantity;
-        existingStock.price =
-          (existingStock.price * existingStock.quantity + totalCost) /
-          (existingStock.quantity + quantity);
+        const updatedPortfolio = portfolio.map((stock) =>
+          stock.ticker === ticker
+            ? {
+                ...stock,
+                quantity: stock.quantity + quantity,
+                price:
+                  (stock.price * stock.quantity + totalCost) /
+                  (stock.quantity + quantity),
+              }
+            : stock
+        );
+        setPortfolio(updatedPortfolio);
       } else {
-        setPortfolio([...portfolio, { ticker, quantity, price: stockPrice }]);
+        setPortfolio([
+          ...portfolio,
+          { ticker, quantity, price: currentStockPrice },
+        ]);
       }
       setHistory([
         {
           action: "BUY",
           ticker,
           quantity,
-          price: stockPrice,
+          price: currentStockPrice,
           timestamp: new Date(),
         },
         ...history,
@@ -63,21 +130,23 @@ export default function Trading() {
   };
 
   const sellStock = () => {
+    const currentStockPrice = stockPrices[ticker];
     const stockIndex = portfolio.findIndex((stock) => stock.ticker === ticker);
+
     if (stockIndex !== -1 && portfolio[stockIndex].quantity >= quantity) {
       const updatedPortfolio = [...portfolio];
       updatedPortfolio[stockIndex].quantity -= quantity;
       if (updatedPortfolio[stockIndex].quantity === 0) {
         updatedPortfolio.splice(stockIndex, 1);
       }
-      setBalance(balance + stockPrice * quantity);
+      setBalance(balance + currentStockPrice * quantity);
       setPortfolio(updatedPortfolio);
       setHistory([
         {
           action: "SELL",
           ticker,
           quantity,
-          price: stockPrice,
+          price: currentStockPrice,
           timestamp: new Date(),
         },
         ...history,
@@ -87,18 +156,46 @@ export default function Trading() {
     }
   };
 
-  // Calculate total profit/loss
+  const sellAllStock = (ticker) => {
+    const stockIndex = portfolio.findIndex((stock) => stock.ticker === ticker);
+    if (stockIndex !== -1) {
+      const stockToSell = portfolio[stockIndex];
+      const currentStockPrice = stockPrices[ticker] || stockToSell.price;
+      const totalSellValue = currentStockPrice * stockToSell.quantity;
+
+      setBalance(balance + totalSellValue);
+      setPortfolio(portfolio.filter((stock) => stock.ticker !== ticker));
+
+      setHistory([
+        {
+          action: "SELL ALL",
+          ticker,
+          quantity: stockToSell.quantity,
+          price: currentStockPrice,
+          timestamp: new Date(),
+        },
+        ...history,
+      ]);
+    } else {
+      setError("You don't own this stock!");
+    }
+  };
+
   const totalPL = portfolio
     .reduce((acc, stock) => {
-      return acc + (stockPrice - stock.price) * stock.quantity;
+      const currentPrice = stockPrices[stock.ticker] || stock.price;
+      return acc + (currentPrice - stock.price) * stock.quantity;
     }, 0)
     .toFixed(2);
 
   return (
     <div style={{ textAlign: "center", color: "white" }}>
       <Navbar />
-      <h1>Mock Trading</h1>
-      <h2>Balance: ${balance.toLocaleString()}</h2>
+      <h1>Mock Trade</h1>
+      <h2 style={{ marginTop: "80px" }}>
+        Your Balance:&nbsp;
+        <span style={{ color: "lightgreen" }}>${balance.toLocaleString()}</span>
+      </h2>
 
       <input
         type="text"
@@ -125,15 +222,20 @@ export default function Trading() {
         Sell
       </button>
 
-      {stockPrice !== null && !isNaN(stockPrice) && (
+      {stockPrices[ticker] !== undefined && !isNaN(stockPrices[ticker]) && (
         <h3>
-          Current {ticker} Price: ${stockPrice.toFixed(2)}
+          Current {ticker} Price:&nbsp;
+          <span style={{ color: "lightgreen" }}>
+            ${stockPrices[ticker].toFixed(2)}
+          </span>
         </h3>
       )}
 
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      <h2 style={{ marginTop: "80px" }}>Total Portfolio P/L</h2>
+      <h3 style={{ color: totalPL >= 0 ? "lightgreen" : "red" }}>
+        {totalPL >= 0 ? `+${totalPL}` : totalPL} USD
+      </h3>
 
-      <h2>Portfolio</h2>
       <table
         style={{
           width: "50%",
@@ -151,26 +253,42 @@ export default function Trading() {
             <th>Current Price</th>
             <th>Total Value</th>
             <th>P/L</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody>
           {portfolio.map((stock, index) => {
+            const currentPrice = stockPrices[stock.ticker] || stock.price;
             const profitLoss = (
-              (stockPrice - stock.price) *
+              (currentPrice - stock.price) *
               stock.quantity
             ).toFixed(2);
-            const totalValue = stockPrice
-              ? (stockPrice * stock.quantity).toFixed(2)
-              : "-";
+            const totalValue = (currentPrice * stock.quantity).toFixed(2);
+
             return (
               <tr key={index}>
                 <td>{stock.ticker}</td>
                 <td>{stock.quantity}</td>
                 <td>${stock.price.toFixed(2)}</td>
-                <td>${stockPrice ? stockPrice.toFixed(2) : "-"}</td>
+                <td>${currentPrice.toFixed(2)}</td>
                 <td>${totalValue}</td>
                 <td style={{ color: profitLoss >= 0 ? "lightgreen" : "red" }}>
                   {profitLoss >= 0 ? `+${profitLoss}` : profitLoss}
+                </td>
+                <td>
+                  <button
+                    onClick={() => sellAllStock(stock.ticker)}
+                    style={{
+                      padding: "5px",
+                      backgroundColor: "red",
+                      color: "white",
+                      border: "none",
+                      borderRadius: "5px",
+                      cursor: "pointer",
+                    }}
+                  >
+                    Sell All
+                  </button>
                 </td>
               </tr>
             );
@@ -178,12 +296,7 @@ export default function Trading() {
         </tbody>
       </table>
 
-      <h2>Total Portfolio P/L</h2>
-      <h3 style={{ color: totalPL >= 0 ? "lightgreen" : "red" }}>
-        {totalPL >= 0 ? `+${totalPL}` : totalPL} USD
-      </h3>
-
-      <h2>Transaction History</h2>
+      <h2 style={{ marginTop: "80px" }}>Transaction History</h2>
       <ul style={{ listStyleType: "none", padding: 0 }}>
         {history.slice(0, 5).map((entry, index) => (
           <li
