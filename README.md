@@ -5,17 +5,19 @@ Stock Predictor is a web application that allows users to **fetch stock market d
 ## Usage
 
 ### **Backend Setup**
-1. **Activate Virtual Environment**  
+
+**Activate Virtual Environment**  
  - venv\scripts\activate
-2. Train the Machine Learning Model
+   
+**Train the Machine Learning Model**
  - python -m backend.models.train
 
-3. Run the Backend Server 
+**Run the Backend Server**
  - uvicorn backend.main:app --reload
  - The API will be accessible at: http://127.0.0.1:8000/
 
-Frontend Setup
-1. Start the Frontend
+### **Frontend Setup**
+**Start the Frontend**
  - npm run dev
  - The web application will be accessible at: http://localhost:3000/  
 
