@@ -4,20 +4,40 @@ Stock Predictor is a web application that allows users to **fetch stock market d
 
 ##  Features
 
--  Historical & Current Stock Data
-  - Fetch and display real-time & historical stock price data.
-  - Select different time ranges: **All Time, 5 Years, 1 Year, 1 Month, 1 Week, 1 Day**.
-  - Interactive **Plotly candlestick charts**.
+### Historical & Current Stock Data
+- Fetch and display **real-time & historical stock price data**.
+- Select different time ranges: **All Time, 5 Years, 1 Year, 1 Month, 1 Week, 1 Day**.
+- Interactive **Plotly candlestick charts** for visualization.
 
-- Stock Market News & Sentiment Analysis
-  - Pulls relevant financial news articles for a given stock.
-  - Analyzes sentiment (**Positive / Negative / Neutral**) using NLP.
-  - Displays **Top Market Stories** from Yahoo Finance.
+### Stock Price Prediction
+- Uses a **trained Random Forest Regression model** to forecast stock prices.
+- Analyzes **historical data & technical indicators** such as:
+  - **Moving Averages (MA5, MA20)**
+  - **RSI (Relative Strength Index)**
+  - **MACD (Moving Average Convergence Divergence)**
+  - **Volatility indicators**
+- Supports multiple prediction timeframes:
+  - **Next 1 Day**
+  - **Next 1 Week**
+  - **Next 1 Month**
+- Visualizes trends using **Plotly interactive charts**.
 
--  Stock Price Prediction
-  - Uses a trained Random Forest Regression model to forecast stock prices based on historical data and technical indicators such as Moving Averages (MA5, MA20), RSI, MACD, and Volatility.
-  - Supports multiple prediction timeframes: **Next 1 Day, Next 1 Week, Next 1 Month**.
-  - Visualizes trends using **Plotly interactive charts**.
+### Mock Trading Simulator
+- **Trade with $100,000 in virtual money** and simulate the stock market.
+- **Buy and sell stocks** using real-time stock prices.
+- **Track your portfolio** with:
+  - **Stock holdings, profit/loss calculations, and total portfolio value.**
+- **"Sell All" option** to liquidate holdings instantly.
+- **Transaction History** logs every trade:
+  - Buy/Sell transactions are recorded with timestamps.
+- **Balance updates dynamically** based on executed trades.
+- **Live stock price updates** ensure realistic market conditions.
+
+### Stock Market News & Sentiment Analysis
+- Pulls **relevant financial news articles** for a given stock.
+- Performs **sentiment analysis** (**Positive / Negative / Neutral**) using NLP.
+- Displays **Top Market Stories** from Yahoo Finance.
+
 
 
 ## Home page
