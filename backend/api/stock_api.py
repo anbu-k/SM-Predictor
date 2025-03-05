@@ -45,3 +45,26 @@ def fetch_default_stock(ticker: str):
 def fetch_stock_with_period(ticker: str, period: str):
     """Fetch stock data for a ticker with a specified time period."""
     return fetch_stock_data(ticker, period)
+
+@router.get("/top-movers")
+def get_top_movers():
+    """Fetch top 5 gainers and top 5 losers for the day."""
+    tickers = ["AAPL", "GOOGL", "MSFT", "TSLA", "AMZN", "META", "NVDA", "AMD", 
+           "INTC", "CSCO", "JPM", "GS", "BAC", "C", "WFC", "AXP", "MS", "WMT", 
+           "COST", "TGT", "HD", "LOW", "NKE", "PG", "KO", "PEP", "JNJ", "PFE", "MRNA", 
+           "LLY", "UNH", "BMY", "CVS", "GILD", "XOM", "CVX", "GE", "BA", "CAT", "MMM", 
+           "HON", "BTC-USD", "ETH-USD", "DOGE-USD", "SPY", "QQQ", "VTI"]  
+    stocks = []
+
+    for ticker in tickers:
+        stock = yf.Ticker(ticker)
+        data = stock.history(period="1d")
+        if not data.empty:
+            price = data["Close"].iloc[-1]
+            change = ((data["Close"].iloc[-1] - data["Open"].iloc[-1]) / data["Open"].iloc[-1]) * 100
+            stocks.append({"ticker": ticker, "price": price, "change": change})
+
+    top_gainers = sorted(stocks, key=lambda x: x["change"], reverse=True)[:10]
+    top_losers = sorted(stocks, key=lambda x: x["change"])[:10]
+
+    return {"gainers": top_gainers, "losers": top_losers}

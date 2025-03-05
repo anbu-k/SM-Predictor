@@ -32,6 +32,12 @@ export default function Navbar() {
         Trading
       </Link>
       <Link
+        href="/top-movers"
+        style={{ marginRight: "20px", color: "white", textDecoration: "none" }}
+      >
+        Top Movers
+      </Link>
+      <Link
         href="/news"
         style={{ marginRight: "20px", color: "white", textDecoration: "none" }}
       >

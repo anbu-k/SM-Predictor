@@ -22,15 +22,10 @@
       "static/chunks/main.js",
       "static/chunks/pages/_error.js"
     ],
-    "/disclaimer": [
+    "/top-movers": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
-      "static/chunks/pages/disclaimer.js"
-    ],
-    "/trading": [
-      "static/chunks/webpack.js",
-      "static/chunks/main.js",
-      "static/chunks/pages/trading.js"
+      "static/chunks/pages/top-movers.js"
     ]
   },
   "ampFirstPages": []
