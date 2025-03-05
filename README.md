@@ -41,14 +41,15 @@ Stock Predictor is a web application that allows users to **fetch stock market d
 
 
 ## Home page
-![SMPH](https://github.com/user-attachments/assets/881ccedc-4c0f-4e97-a0b7-286221e91ef1)
+![image](https://github.com/user-attachments/assets/485e5009-c3e2-4ba8-a6d9-26886b585c72)
 
 ## Predictor Page
-![SMPP](https://github.com/user-attachments/assets/37e67a52-1087-4cc1-9c91-247b1013b3e4)
+![image](https://github.com/user-attachments/assets/2919c7c1-d623-4d9e-8520-75202e419d23)
 
 ## Mock Trader
 ![image](https://github.com/user-attachments/assets/61fc36e9-4c78-47c8-84d2-95bc8fd4f0d6)
 
 ## News Page
-![SMPN](https://github.com/user-attachments/assets/71aeb337-ef20-4c4c-9513-c537d4f32cce)
-![SMPN2](https://github.com/user-attachments/assets/d75a7492-2611-45c6-bae3-3cb68f6b2138)
+![image](https://github.com/user-attachments/assets/002d9594-8258-40dc-8b65-14ba4b6b9dc6)
+![image](https://github.com/user-attachments/assets/f3cb61cf-4d6b-4b2c-9ebb-b5945c146f76)
+
