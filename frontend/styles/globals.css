@@ -22,5 +22,13 @@ html {
     overflow-y: hidden !important;
   }
   
+  .portfolio-table {
+    margin-top: 80px !important;
+    width: 60%;
+    margin: auto;
+    border-collapse: collapse;
+    background: #222;
+    padding: 0;
+  }
 
   

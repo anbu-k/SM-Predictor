@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import Navbar from "../components/navbar";
 
 export default function Trading() {
+  // Load initial state from local storage or use defaults
   const [balance, setBalance] = useState(100000);
   const [portfolio, setPortfolio] = useState([]);
   const [ticker, setTicker] = useState("");
@@ -10,11 +11,61 @@ export default function Trading() {
   const [error, setError] = useState(null);
   const [history, setHistory] = useState([]);
 
+  // Load state from local storage on component mount (client-side only)
   useEffect(() => {
-    // only starts an interval if portfolio has stocks
+    if (typeof window !== "undefined") {
+      const savedBalance = Number(localStorage.getItem("balance")) || 100000;
+      const savedPortfolio =
+        JSON.parse(localStorage.getItem("portfolio")) || [];
+      const savedHistory = JSON.parse(localStorage.getItem("history")) || [];
+
+      setBalance(savedBalance);
+      setPortfolio(savedPortfolio);
+      setHistory(savedHistory);
+    }
+  }, []);
+
+  // Save state to local storage whenever it changes
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("balance", balance);
+    }
+  }, [balance]);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("portfolio", JSON.stringify(portfolio));
+    }
+  }, [portfolio]);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("history", JSON.stringify(history));
+    }
+  }, [history]);
+
+  // Calculate live balance (cash + stock value)
+  const liveBalance = portfolio.reduce((acc, stock) => {
+    const currentPrice = stockPrices[stock.ticker] || stock.price;
+    return acc + currentPrice * stock.quantity;
+  }, balance);
+
+  // Resets portfolio, balance, and history
+  const resetPortfolio = () => {
+    setBalance(100000);
+    setPortfolio([]);
+    setHistory([]);
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("balance");
+      localStorage.removeItem("portfolio");
+      localStorage.removeItem("history");
+    }
+  };
+
+  // Fetch stock prices for all stocks in the portfolio
+  useEffect(() => {
     if (portfolio.length === 0) return;
 
-    // fetches prices for all stocks in portfolio
     const fetchAllStockPrices = async () => {
       const pricePromises = portfolio.map(async (stock) => {
         try {
@@ -31,12 +82,11 @@ export default function Trading() {
 
       try {
         const results = await Promise.all(pricePromises);
-        const validResults = results.filter(result => result !== null);
-        
-        // Updates stockPrices with new prices
-        setStockPrices(prev => {
-          const newPrices = {...prev};
-          validResults.forEach(result => {
+        const validResults = results.filter((result) => result !== null);
+
+        setStockPrices((prev) => {
+          const newPrices = { ...prev };
+          validResults.forEach((result) => {
             newPrices[result.ticker] = result.price;
           });
           return newPrices;
@@ -46,16 +96,12 @@ export default function Trading() {
       }
     };
 
-    // The initial fetch
     fetchAllStockPrices();
-
-    // Set up interval to fetch prices every 5 seconds
     const interval = setInterval(fetchAllStockPrices, 5000);
-
-    // Cleans interval when component unmounts or portfolio becomes empty
     return () => clearInterval(interval);
   }, [portfolio]);
 
+  // Fetch stock price for the current ticker
   useEffect(() => {
     if (!ticker) return;
     fetchStockPrice();
@@ -93,7 +139,9 @@ export default function Trading() {
 
     const totalCost = currentStockPrice * quantity;
     if (balance >= totalCost) {
-      setBalance(balance - totalCost);
+      const newBalance = balance - totalCost;
+      setBalance(newBalance);
+
       const existingStock = portfolio.find((stock) => stock.ticker === ticker);
       if (existingStock) {
         const updatedPortfolio = portfolio.map((stock) =>
@@ -114,6 +162,7 @@ export default function Trading() {
           { ticker, quantity, price: currentStockPrice },
         ]);
       }
+
       setHistory([
         {
           action: "BUY",
@@ -139,8 +188,11 @@ export default function Trading() {
       if (updatedPortfolio[stockIndex].quantity === 0) {
         updatedPortfolio.splice(stockIndex, 1);
       }
-      setBalance(balance + currentStockPrice * quantity);
+
+      const newBalance = balance + currentStockPrice * quantity;
+      setBalance(newBalance);
       setPortfolio(updatedPortfolio);
+
       setHistory([
         {
           action: "SELL",
@@ -163,7 +215,8 @@ export default function Trading() {
       const currentStockPrice = stockPrices[ticker] || stockToSell.price;
       const totalSellValue = currentStockPrice * stockToSell.quantity;
 
-      setBalance(balance + totalSellValue);
+      const newBalance = balance + totalSellValue;
+      setBalance(newBalance);
       setPortfolio(portfolio.filter((stock) => stock.ticker !== ticker));
 
       setHistory([
@@ -192,10 +245,20 @@ export default function Trading() {
     <div style={{ textAlign: "center", color: "white" }}>
       <Navbar />
       <h1>Mock Trade</h1>
-      <h2 style={{ marginTop: "80px" }}>
-        Your Balance:&nbsp;
+      <h2 style={{ marginTop: "40px" }}>
+        Your Current Balance:&nbsp;
         <span style={{ color: "lightgreen" }}>${balance.toLocaleString()}</span>
       </h2>
+      <h2>
+        Live Balance (Cash + Stocks):&nbsp;
+        <span style={{ color: "lightgreen" }}>
+          ${liveBalance.toLocaleString()}
+        </span>
+      </h2>
+      <h2 style={{ marginTop: "20px" }}>Total Portfolio P/L</h2>
+      <h3 style={{ color: totalPL >= 0 ? "lightgreen" : "red" }}>
+        {totalPL >= 0 ? `+${totalPL}` : totalPL} USD
+      </h3>
 
       <input
         type="text"
@@ -221,6 +284,17 @@ export default function Trading() {
       <button onClick={sellStock} style={{ padding: "10px" }}>
         Sell
       </button>
+      <button
+        onClick={resetPortfolio}
+        style={{
+          backgroundColor: "red",
+          color: "white",
+          padding: "10px",
+          marginLeft: "5px",
+        }}
+      >
+        Reset Portfolio
+      </button>
 
       {stockPrices[ticker] !== undefined && !isNaN(stockPrices[ticker]) && (
         <h3>
@@ -231,20 +305,9 @@ export default function Trading() {
         </h3>
       )}
 
-      <h2 style={{ marginTop: "80px" }}>Total Portfolio P/L</h2>
-      <h3 style={{ color: totalPL >= 0 ? "lightgreen" : "red" }}>
-        {totalPL >= 0 ? `+${totalPL}` : totalPL} USD
-      </h3>
+      {error && <p style={{ color: "red" }}>{error}</p>}
 
-      <table
-        style={{
-          width: "50%",
-          margin: "auto",
-          borderCollapse: "collapse",
-          background: "#222",
-          padding: "10px",
-        }}
-      >
+      <table className="portfolio-table">
         <thead>
           <tr style={{ borderBottom: "2px solid white" }}>
             <th>Ticker</th>

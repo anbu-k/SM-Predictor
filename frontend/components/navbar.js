@@ -26,16 +26,16 @@ export default function Navbar() {
         Predictor
       </Link>
       <Link
-        href="/news"
-        style={{ marginRight: "20px", color: "white", textDecoration: "none" }}
-      >
-        News
-      </Link>
-      <Link
         href="/trading"
         style={{ marginRight: "20px", color: "white", textDecoration: "none" }}
       >
         Trading
+      </Link>
+      <Link
+        href="/news"
+        style={{ marginRight: "20px", color: "white", textDecoration: "none" }}
+      >
+        News
       </Link>
       <Link
         href="/disclaimer"
