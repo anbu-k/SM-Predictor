@@ -74,7 +74,7 @@ export default function Home() {
       }}
     >
       <Navbar /> {}
-      <h1>Historical & Current Stock Info.</h1>
+      <h1 style={{ marginTop: "40px" }}>Historical & Current Stock Info.</h1>
       <input
         type="text"
         value={ticker}

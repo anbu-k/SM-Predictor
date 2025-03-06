@@ -27,15 +27,10 @@
       "static/chunks/main.js",
       "static/chunks/pages/_error.js"
     ],
-    "/disclaimer": [
+    "/top-movers": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
-      "static/chunks/pages/disclaimer.js"
-    ],
-    "/insider": [
-      "static/chunks/webpack.js",
-      "static/chunks/main.js",
-      "static/chunks/pages/insider.js"
+      "static/chunks/pages/top-movers.js"
     ]
   },
   "ampFirstPages": []

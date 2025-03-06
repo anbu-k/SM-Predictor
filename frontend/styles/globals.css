@@ -31,4 +31,61 @@ html {
     padding: 0;
   }
 
+  /* Stock Ticker Styles */
+  .ticker-container {
+    background: rgba(13, 39, 65, 0.15);  /* 60% opacity, text remains fully visible */
+    color: white;  
+    padding: 10px 0;
+    overflow: hidden;
+    white-space: nowrap;
+    font-size: 14px;
+    font-weight: bold;
+    width: 100%;
+    position: relative;
+    height: 10px;
+    align-items: center;
+  }
   
+
+.ticker-wrapper {
+  display: flex;
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.ticker {
+  display: inline-block;
+  white-space: nowrap;
+  padding-left: 100%;
+}
+
+/* Start scrolling only after data is loaded */
+.start-scroll .ticker {
+  animation: scrollTicker 55s linear infinite;
+}
+
+.ticker-item {
+  margin-right: 20px;
+}
+
+/* Colored arrows */
+.green-arrow {
+  color: lightgreen;
+  font-weight: bold;
+}
+
+.red-arrow {
+  color: red;
+  font-weight: bold;
+}
+
+/* Smooth scrolling animation */
+@keyframes scrollTicker {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}

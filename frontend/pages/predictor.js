@@ -54,7 +54,7 @@ export default function Predictor() {
     return (
         <div style={{ textAlign: "center", marginTop: "0px", color: "white" }}>
             <Navbar />
-            <h1>Stock Price Predictions </h1>
+            <h1 style={{ marginTop: "40px" }}>Stock Price Predictions </h1>
             <input
                 type="text"
                 value={ticker}

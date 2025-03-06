@@ -68,6 +68,7 @@ export default function News() {
             padding: "20px",
             borderRadius: "10px",
             marginBottom: "20px",
+            marginTop: "40px"
           }}
         >
           <h2>📢 Top Market Stories</h2>

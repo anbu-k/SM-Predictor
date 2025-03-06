@@ -36,7 +36,7 @@ export default function InsiderTrading() {
   return (
     <div style={{ textAlign: "center", color: "white", paddingBottom: "50px" }}>
       <Navbar />
-      <h1>Insider Filing Tracker</h1>
+      <h1 style={{ marginTop: "40px" }}>Insider Filing Tracker</h1>
 
       {/* Ticker Input */}
       <input

@@ -131,7 +131,7 @@ export default function TopMovers() {
   return (
     <div style={{ textAlign: "center", color: "white", paddingBottom: "50px" }}>
       <Navbar />
-      <h1> Top Moving Stocks & Watchlist</h1>
+      <h1 style={{ marginTop: "40px" }}> Top Moving Stocks & Watchlist</h1>
 
       {error && <p style={{ color: "red" }}>{error}</p>}
 

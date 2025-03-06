@@ -1,7 +1,9 @@
 import Link from "next/link";
+import StockTicker from "./ticker";
 
 export default function Navbar() {
   return (
+    <div style={{ background: "#0D1117" }}>
     <nav
       style={{
         background: "#0D1117",
@@ -35,7 +37,7 @@ export default function Navbar() {
         href="/top-movers"
         style={{ marginRight: "20px", color: "white", textDecoration: "none" }}
       >
-        Top Movers
+        Trending
       </Link>
       <Link
         href="/news"
@@ -56,5 +58,7 @@ export default function Navbar() {
         Disclaimer
       </Link>
     </nav>
+    <StockTicker />
+    </div>
   );
 }

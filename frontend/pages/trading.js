@@ -244,7 +244,7 @@ export default function Trading() {
   return (
     <div style={{ textAlign: "center", color: "white" }}>
       <Navbar />
-      <h1>Mock Trader</h1>
+      <h1 style={{ marginTop: "40px" }}>Mock Trader</h1>
       <h2 style={{ marginTop: "40px" }}>
         Available Spending Balance:&nbsp;
         <span style={{ color: "lightgreen" }}>${balance.toLocaleString()}</span>
