@@ -11,7 +11,7 @@ export default function Navbar() {
       }}
     >
       <h2 style={{ marginTop: "0px", fontSize: "28px" }}>
-        Stock Predictor 📈📊
+        SM Predictor 📈📊
       </h2>
       <Link
         href="/"

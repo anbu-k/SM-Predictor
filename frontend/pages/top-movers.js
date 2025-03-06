@@ -45,6 +45,28 @@ export default function TopMovers() {
     setWatchlist(savedWatchlist);
   }, []);
 
+  useEffect(() => {
+    const fetchWatchlistDetails = async () => {
+      for (let ticker of watchlist) {
+        if (!stockDetails[ticker]) {
+          try {
+            const response = await fetch(
+              `http://127.0.0.1:8000/api/stock/${ticker}/1d`
+            );
+            const data = await response.json();
+            setStockDetails((prev) => ({ ...prev, [ticker]: data }));
+          } catch (err) {
+            console.error(`Error fetching details for ${ticker}:`, err);
+          }
+        }
+      }
+    };
+
+    if (watchlist.length > 0) {
+      fetchWatchlistDetails();
+    }
+  }, [watchlist]);
+
   // Toggles watchlist
   const toggleWatchlist = async (ticker) => {
     let updatedWatchlist;

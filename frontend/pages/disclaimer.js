@@ -18,7 +18,7 @@ export default function Disclaimer() {
                     ⚠️ Disclaimer
                 </h2>
                 <p>
-                    The information provided by <strong>Stock Predictor</strong> is for educational and informational purposes only.
+                    The information provided by <strong>SM Predictor</strong> is for educational and informational purposes only.
                     It is not intended as financial, investment, or trading advice.
                 </p>
                 <p>
