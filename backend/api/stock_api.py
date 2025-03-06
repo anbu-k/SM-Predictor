@@ -2,10 +2,13 @@ from fastapi import APIRouter
 import yfinance as yf
 import requests
 import os
+from dotenv import load_dotenv
 
 router = APIRouter()
 
-SEC_API_KEY = "5e45e39243a73823cd12856472b96bd34a320b19abf53fca5f3969e1d690d25d"  
+load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), "../.env"))
+
+SEC_API_KEY = os.getenv("SEC_API_KEY") 
 SEC_API_URL = "https://api.sec-api.io"
 
 # Allowed time periods
