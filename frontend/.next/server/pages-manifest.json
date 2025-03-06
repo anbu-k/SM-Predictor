@@ -2,7 +2,11 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
+  "/insider": "pages/insider.js",
+  "/": "pages/index.js",
+  "/predictor": "pages/predictor.js",
   "/top-movers": "pages/top-movers.js",
+  "/trading": "pages/trading.js",
   "/news": "pages/news.js",
-  "/trading": "pages/trading.js"
+  "/disclaimer": "pages/disclaimer.js"
 }

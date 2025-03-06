@@ -44,6 +44,12 @@ export default function Navbar() {
         News
       </Link>
       <Link
+        href="/insider"
+        style={{ marginRight: "20px", color: "white", textDecoration: "none" }}
+      >
+        Insider Trading
+      </Link>
+      <Link
         href="/disclaimer"
         style={{ marginRight: "20px", color: "white", textDecoration: "none" }}
       >

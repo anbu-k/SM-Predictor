@@ -1,7 +1,12 @@
 from fastapi import APIRouter
 import yfinance as yf
+import requests
+import os
 
 router = APIRouter()
+
+SEC_API_KEY = "5e45e39243a73823cd12856472b96bd34a320b19abf53fca5f3969e1d690d25d"  
+SEC_API_URL = "https://api.sec-api.io"
 
 # Allowed time periods
 TIME_PERIODS = {
@@ -40,6 +45,7 @@ def fetch_stock_data(ticker: str, period: str):
         "trend": "Uptrend" if stock.info.get("fiftyDayAverage", 0) > stock.info.get("twoHundredDayAverage", 0) else "Downtrend",
         "earnings_date": stock.calendar.get("Earnings Date", "N/A"),
         "dividend_yield": stock.info.get("dividendYield", 0) * 100 if stock.info.get("dividendYield") else "N/A",
+        "insider_ownership": stock.info.get("heldPercentInsiders", 0) * 100,  # Insider ownership %
     }
 
 @router.get("/stock/{ticker}")
@@ -74,3 +80,34 @@ def get_top_movers():
     top_losers = sorted(stocks, key=lambda x: x["change"])[:10]
 
     return {"gainers": top_gainers, "losers": top_losers}
+
+@router.get("/insider/{ticker}")
+def get_insider_trades(ticker: str):
+    """Fetch recent insider trading activity for a given stock ticker from SEC API."""
+    query_payload = {
+        "query": f'ticker:"{ticker}" AND formType:("3", "4", "5")',
+        "from": "0",
+        "size": "10",  # Get the 10 most recent insider trades
+        "sort": [{"filedAt": {"order": "desc"}}]
+    }
+
+    headers = {"Authorization": SEC_API_KEY}
+    response = requests.post(SEC_API_URL, json=query_payload, headers=headers)
+
+    if response.status_code == 200:
+        data = response.json()
+        transactions = data.get("filings", [])
+
+        # Format data for frontend display
+        formatted_trades = []
+        for trade in transactions:
+            formatted_trades.append({
+                "ownerName": trade.get("entities", [{}])[0].get("companyName", "N/A"),  # Name of insider
+                "transactionDate": trade.get("filedAt", "N/A"),  # Filing date
+                "transactionType": trade.get("formType", "N/A"),  # Type of transaction (Form 3, 4, or 5)
+                "linkToFiling": trade.get("linkToFilingDetails", "N/A"),  # SEC filing link
+            })
+
+        return {"ticker": ticker, "trades": formatted_trades}
+    else:
+        return {"error": "Failed to fetch insider trading data"}
