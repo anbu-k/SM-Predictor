@@ -98,7 +98,7 @@ export default function Home() {
             width: "100%",
           }}
         >
-          <h2 style={{ marginBottom: "5px" }}>
+          <h2 style={{ marginBottom: "5px", marginTop: "5px" }}>
             {stockData.company_name} ({stockData.ticker})
           </h2>
 
@@ -114,6 +114,45 @@ export default function Home() {
           >
             <strong>Volume:</strong> {stockData.volume.toLocaleString()}
           </p>
+          <div
+            style={{
+              marginTop: "-10px",
+              marginBottom: "5px",
+              textAlign: "center",
+              display: "flex",
+              gap: "15x",
+            }}
+          >
+            <label
+              style={{
+                fontWeight: "bold",
+                fontSize: "16px",
+                position: "relative",
+                top: "15px", 
+              }}
+              htmlFor="timeRange"
+            >
+              <strong>Select Time Range: &nbsp;</strong>
+            </label>
+            <br />
+            <select
+              id="timeRange"
+              value={period}
+              onChange={(e) => handleTimeChange(e.target.value)}
+              style={{
+                padding: "10px",
+                fontSize: "16px",
+                marginTop: "5px",
+                cursor: "pointer",
+              }}
+            >
+              {Object.entries(timeOptions).map(([key, label]) => (
+                <option key={key} value={key}>
+                  {label}
+                </option>
+              ))}
+            </select>
+          </div>
 
           <div
             style={{ display: "flex", justifyContent: "center", width: "100%" }}
@@ -141,31 +180,6 @@ export default function Home() {
                 height: 500,
               }}
             />
-          </div>
-
-          <div style={{ marginTop: "15px", textAlign: "center" }}>
-            <label htmlFor="timeRange">
-              <strong>Select Time Range:</strong>
-            </label>
-            <br />
-            <select
-              id="timeRange"
-              value={period}
-              onChange={(e) => handleTimeChange(e.target.value)}
-              style={{
-                padding: "10px",
-                fontSize: "16px",
-                marginTop: "5px",
-                textAlign: "center",
-                cursor: "pointer",
-              }}
-            >
-              {Object.entries(timeOptions).map(([key, label]) => (
-                <option key={key} value={key}>
-                  {label}
-                </option>
-              ))}
-            </select>
           </div>
         </div>
       )}
