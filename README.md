@@ -53,11 +53,28 @@ SM Predictor is a web application that allows users to **fetch stock market data
 - **Balance updates dynamically** based on executed trades.
 - **Live stock price updates** ensure realistic market conditions.
 
+### Top Movers & Losers + Watchlist
+- Tracks the **Top 10 gainers and Top 10 losers** in the stock market.
+- Provides **real-time percentage changes** for the biggest market movers
+- **Sortable list** to analyze daily trends and fluctuations.
+- Interactive watchlist integration-click to add/remove stocks from the watchlist
+- Watchlist **saves your favorite stocks** to track their performance over time.
+- The watchlist displays **key financial metrics** for each stock:
+  - Current price
+  - 52-Week High & Low
+  - Market Trend (Uptrend/Downtrend)
+  - Next Earnings Report Date
+  - Dividend Yield
+- Auto updates stock prices & key financial data
+
 ### Stock Market News & Sentiment Analysis
 - Pulls **relevant financial news articles** for a given stock.
 - Performs **sentiment analysis** (**Positive / Negative / Neutral**) using NLP.
 - Displays **Top Market Stories** from Yahoo Finance.
 
+### Insider Trade Tracking
+- Fetches **SEC Form 3, 4, and 5 filings** to track insider transactions.
+- Displays recent **insider buys & sells** for a selected stock.
 
 ##  Pages
 
