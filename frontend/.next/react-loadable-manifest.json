@@ -4,11 +4,5 @@
     "files": [
       "static/chunks/node_modules_react-plotly_js_react-plotly_js.js"
     ]
-  },
-  "predictor.js -> react-plotly.js": {
-    "id": "predictor.js -> react-plotly.js",
-    "files": [
-      "static/chunks/node_modules_react-plotly_js_react-plotly_js.js"
-    ]
   }
 }

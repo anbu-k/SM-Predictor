@@ -4,9 +4,5 @@
   "/_document": "pages/_document.js",
   "/insider": "pages/insider.js",
   "/": "pages/index.js",
-  "/predictor": "pages/predictor.js",
-  "/top-movers": "pages/top-movers.js",
-  "/trading": "pages/trading.js",
-  "/news": "pages/news.js",
   "/disclaimer": "pages/disclaimer.js"
 }

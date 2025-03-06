@@ -63,6 +63,7 @@ export default function InsiderTrading() {
           style={{
             width: "80%",
             margin: "auto",
+            marginTop: "40px",
             background: "#222",
             padding: "10px",
           }}

@@ -90,7 +90,7 @@ def get_insider_trades(ticker: str):
     query_payload = {
         "query": f'ticker:"{ticker}" AND formType:("3", "4", "5")',
         "from": "0",
-        "size": "10",  # Gets the 10 most recent insider trades
+        "size": "10",  # Gets the 20 most recent insider trades
         "sort": [{"filedAt": {"order": "desc"}}]
     }
 
