@@ -2,5 +2,7 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/top-movers": "pages/top-movers.js"
+  "/top-movers": "pages/top-movers.js",
+  "/news": "pages/news.js",
+  "/trading": "pages/trading.js"
 }

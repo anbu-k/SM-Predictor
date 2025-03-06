@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { FaRegStar, FaStar, FaSort } from "react-icons/fa"; // Import icons
+import { FaRegStar, FaStar, FaSort } from "react-icons/fa";
 import Navbar from "../components/navbar";
 
 export default function TopMovers() {
@@ -39,25 +39,41 @@ export default function TopMovers() {
     }
   }, [autoRefresh]);
 
-  // Load watchlist from localStorage
+  // Loads watchlist from localStorage
   useEffect(() => {
     const savedWatchlist = JSON.parse(localStorage.getItem("watchlist")) || [];
     setWatchlist(savedWatchlist);
   }, []);
 
-  // Toggle watchlist
-  const toggleWatchlist = (ticker) => {
+  // Toggles watchlist
+  const toggleWatchlist = async (ticker) => {
     let updatedWatchlist;
+
     if (watchlist.includes(ticker)) {
+      // Remove from watchlist
       updatedWatchlist = watchlist.filter((stock) => stock !== ticker);
     } else {
+      // Add to watchlist
       updatedWatchlist = [...watchlist, ticker];
+
+      if (!stockDetails[ticker]) {
+        try {
+          const response = await fetch(
+            `http://127.0.0.1:8000/api/stock/${ticker}/1d`
+          );
+          const data = await response.json();
+          setStockDetails((prev) => ({ ...prev, [ticker]: data }));
+        } catch (err) {
+          console.error(`Error fetching details for ${ticker}:`, err);
+        }
+      }
     }
+
     setWatchlist(updatedWatchlist);
     localStorage.setItem("watchlist", JSON.stringify(updatedWatchlist));
   };
 
-  // Fetch stock details on hover
+  // Fetches stock details on hover
   const fetchStockDetails = async (ticker) => {
     if (!stockDetails[ticker]) {
       try {
@@ -91,7 +107,7 @@ export default function TopMovers() {
   return (
     <div style={{ textAlign: "center", color: "white", paddingBottom: "50px" }}>
       <Navbar />
-      <h1>📈 Top Moving Stocks & Watchlist</h1>
+      <h1> Top Moving Stocks & Watchlist</h1>
 
       {error && <p style={{ color: "red" }}>{error}</p>}
 
@@ -138,10 +154,10 @@ export default function TopMovers() {
       >
         <thead>
           <tr>
-            <th>Ticker</th>
-            <th>Price</th>
-            <th>Change (%)</th>
-            <th>Watchlist</th>
+            <th style={{ width: "25%" }}>Ticker</th>
+            <th style={{ width: "25%" }}>Price</th>
+            <th style={{ width: "25%" }}>Change (%)</th>
+            <th style={{ width: "25%" }}>Watchlist</th>
           </tr>
         </thead>
         <tbody>
@@ -150,10 +166,23 @@ export default function TopMovers() {
               <td
                 onMouseEnter={(event) => {
                   fetchStockDetails(stock.ticker);
+
+                  const tooltipHeight = 120;
+                  const offsetY = 15;
+                  const newY =
+                    event.clientY + tooltipHeight > window.innerHeight
+                      ? event.clientY - tooltipHeight - offsetY
+                      : event.clientY + offsetY;
+
+                  const newX =
+                    event.clientX + 250 > window.innerWidth
+                      ? event.clientX - 250
+                      : event.clientX + 10;
+
                   setHoveredStock({
                     ticker: stock.ticker,
-                    x: event.clientX,
-                    y: event.clientY + window.scrollY,
+                    x: newX,
+                    y: newY + window.scrollY,
                   });
                 }}
                 onMouseMove={(event) => {
@@ -161,8 +190,8 @@ export default function TopMovers() {
                     prev?.ticker
                       ? {
                           ...prev,
-                          x: event.clientX,
-                          y: event.clientY + window.scrollY,
+                          x: event.clientX + 10,
+                          y: event.clientY + window.scrollY + 10,
                         }
                       : prev
                   );
@@ -208,10 +237,10 @@ export default function TopMovers() {
       >
         <thead>
           <tr>
-            <th>Ticker</th>
-            <th>Price</th>
-            <th>Change (%)</th>
-            <th>Watchlist</th>
+            <th style={{ width: "25%" }}>Ticker</th>
+            <th style={{ width: "25%" }}>Price</th>
+            <th style={{ width: "25%" }}>Change (%)</th>
+            <th style={{ width: "25%" }}>Watchlist</th>
           </tr>
         </thead>
         <tbody>
@@ -220,10 +249,23 @@ export default function TopMovers() {
               <td
                 onMouseEnter={(event) => {
                   fetchStockDetails(stock.ticker);
+
+                  const tooltipHeight = 120;
+                  const offsetY = 15;
+                  const newY =
+                    event.clientY + tooltipHeight > window.innerHeight
+                      ? event.clientY - tooltipHeight - offsetY
+                      : event.clientY + offsetY;
+
+                  const newX =
+                    event.clientX + 250 > window.innerWidth
+                      ? event.clientX - 250
+                      : event.clientX + 10;
+
                   setHoveredStock({
                     ticker: stock.ticker,
-                    x: event.clientX,
-                    y: event.clientY + window.scrollY,
+                    x: newX,
+                    y: newY + window.scrollY,
                   });
                 }}
                 onMouseMove={(event) => {
@@ -231,8 +273,8 @@ export default function TopMovers() {
                     prev?.ticker
                       ? {
                           ...prev,
-                          x: event.clientX,
-                          y: event.clientY + window.scrollY,
+                          x: event.clientX + 10,
+                          y: event.clientY + window.scrollY + 10,
                         }
                       : prev
                   );
@@ -266,7 +308,7 @@ export default function TopMovers() {
       <h2 style={{ marginTop: "40px" }}>⭐ Your Watchlist</h2>
       <table
         style={{
-          width: "50%",
+          width: "70%",
           margin: "auto",
           background: "#222",
           padding: "10px",
@@ -276,65 +318,74 @@ export default function TopMovers() {
           <tr>
             <th>Ticker</th>
             <th>Current Price</th>
-            <th>Action</th>
+            <th>Change Since Added (%)</th>
+            <th>52W High</th>
+            <th>52W Low</th>
+            <th>Market Trend</th>
+            <th>Next Earnings</th>
+            <th>Dividend Yield</th>
           </tr>
         </thead>
         <tbody>
-          {watchlist.map((ticker, index) => (
-            <tr key={index}>
-              <td
-                onMouseEnter={(event) => {
-                  fetchStockDetails(ticker);
-                  setHoveredStock({
-                    ticker,
-                    x: event.clientX,
-                    y: event.clientY + window.scrollY, // ✅ Adjusts for scroll position
-                  });
-                }}
-                onMouseMove={(event) => {
-                  setHoveredStock((prev) =>
-                    prev?.ticker
-                      ? {
-                          ...prev,
-                          x: event.clientX,
-                          y: event.clientY + window.scrollY,
-                        }
-                      : prev
-                  );
-                }}
-                onMouseLeave={() =>
-                  setHoveredStock({ ticker: null, x: 0, y: 0 })
-                }
-                style={{ cursor: "pointer", textDecoration: "underline" }}
-              >
-                {ticker}
-              </td>
-              <td>
-                ${Number(stockDetails[ticker]?.current_price || 0).toFixed(2)}
-              </td>
-              <td>
-                <span
-                  onClick={() => toggleWatchlist(ticker)}
-                  style={{ cursor: "pointer", fontSize: "20px" }}
+          {watchlist.map((ticker, index) => {
+            const stock = stockDetails[ticker] || {};
+            const priceNow = stock.current_price || 0;
+            const priceAtAdd = stockDetails[ticker]?.price_at_add || priceNow; // Default to current price
+            const priceChange = (
+              ((priceNow - priceAtAdd) / priceAtAdd) *
+              100
+            ).toFixed(2);
+
+            return (
+              <tr key={index}>
+                <td>{ticker}</td>
+
+                <td>${Number(priceNow || 0).toFixed(2)}</td>
+                <td style={{ color: priceChange >= 0 ? "lightgreen" : "red" }}>
+                  {priceChange >= 0 ? `+${priceChange}%` : `${priceChange}%`}
+                </td>
+                <td>${stock.high_52w?.toFixed(2) || "N/A"}</td>
+                <td>${stock.low_52w?.toFixed(2) || "N/A"}</td>
+                <td
+                  style={{
+                    color: stock.trend === "Uptrend" ? "lightgreen" : "red",
+                  }}
                 >
-                  <FaStar color="gold" />
-                </span>
-              </td>
-            </tr>
-          ))}
+                  {stock.trend || "N/A"}
+                </td>
+                <td>{stock.earnings_date || "N/A"}</td>
+                <td>
+                  {stock.dividend_yield
+                    ? `${Number(stock.dividend_yield).toFixed(2)}%`
+                    : "N/A"}
+                </td>
+                <td>
+                  <span
+                    onClick={() => toggleWatchlist(ticker)}
+                    style={{ cursor: "pointer", fontSize: "20px" }}
+                  >
+                    <FaStar color="gold" />
+                  </span>
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
+
       {/* Stock Details Tooltip on Hover */}
       {hoveredStock?.ticker && stockDetails[hoveredStock.ticker] && (
         <div
           style={{
             position: "absolute",
-            top: `${
-              hoveredStock.y + 180 > window.innerHeight + window.scrollY
-                ? hoveredStock.y - 120 // ✅ If near bottom, flip tooltip up
-                : hoveredStock.y + 15
-            }px`,
-            left: `${hoveredStock.x + 15}px`,
+            top: `${Math.min(
+              hoveredStock.y,
+              window.innerHeight + window.scrollY - 140
+            )}px`,
+            left: `${Math.min(
+              hoveredStock.x,
+              window.innerWidth + window.scrollX - 260
+            )}px`,
             backgroundColor: "#333",
             padding: "12px",
             borderRadius: "8px",
@@ -342,7 +393,8 @@ export default function TopMovers() {
             boxShadow: "0px 0px 10px rgba(255, 255, 255, 0.2)",
             pointerEvents: "none",
             whiteSpace: "nowrap",
-            zIndex: 1000, // ✅ Ensures tooltip stays above other elements
+            zIndex: 9999,
+            maxWidth: "250px",
           }}
         >
           <h3>{hoveredStock.ticker} Details</h3>

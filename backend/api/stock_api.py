@@ -34,6 +34,12 @@ def fetch_stock_data(ticker: str, period: str):
         "low": data["Low"].tolist(),
         "close": data["Close"].tolist(),
         "dates": data.index.strftime("%Y-%m-%d").tolist(),
+        "price_at_add": stock.history(period="1d")["Close"].iloc[0], # Price when added to watchlist
+        "high_52w": stock.info.get("fiftyTwoWeekHigh", "N/A"),
+        "low_52w": stock.info.get("fiftyTwoWeekLow", "N/A"),
+        "trend": "Uptrend" if stock.info.get("fiftyDayAverage", 0) > stock.info.get("twoHundredDayAverage", 0) else "Downtrend",
+        "earnings_date": stock.calendar.get("Earnings Date", "N/A"),
+        "dividend_yield": stock.info.get("dividendYield", 0) * 100 if stock.info.get("dividendYield") else "N/A",
     }
 
 @router.get("/stock/{ticker}")
