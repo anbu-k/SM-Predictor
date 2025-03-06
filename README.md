@@ -1,4 +1,4 @@
-# Stock Predictor
+# SM Predictor
 
 Stock Predictor is a web application that allows users to **fetch stock market data, view historical trends, mock trade, analyze stock sentiment from news, and generate stock price predictions** using machine learning models. **Currently fetching from 47 of the top stock tickers.**
 
@@ -69,6 +69,10 @@ Stock Predictor is a web application that allows users to **fetch stock market d
 
 ### Mock Trader
 ![image](https://github.com/user-attachments/assets/e5b40395-961e-495c-ab6f-558ae104f14f)
+
+### Movers/Watchlist
+![image](https://github.com/user-attachments/assets/359132a1-fbf9-4aa2-afd6-21ec4dd962ec)
+![image](https://github.com/user-attachments/assets/3b3888a7-56ad-4953-88fe-79249a79fd00)
 
 ### News 
 ![image](https://github.com/user-attachments/assets/002d9594-8258-40dc-8b65-14ba4b6b9dc6)
