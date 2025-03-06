@@ -79,23 +79,24 @@ SM Predictor is a web application that allows users to **fetch stock market data
 ##  Pages
 
 ### Home 
-![image](https://github.com/user-attachments/assets/457a03a3-ac88-4733-b12d-065953b49ddd)
+![image](https://github.com/user-attachments/assets/bec85a3d-3e9d-4be1-b02d-4d6f2735f0ef)
 
 ### Predictor 
-![image](https://github.com/user-attachments/assets/63c182f4-2af0-4176-9b2d-c78314652ab6)
+![image](https://github.com/user-attachments/assets/857045aa-12ce-4322-9a9a-12f6d964b67d)
 
 ### Mock Trader
-![image](https://github.com/user-attachments/assets/a8b4f324-d350-4c6b-a2fa-bd9d8912ea4f)
+![image](https://github.com/user-attachments/assets/c3e7ea9d-031c-4cfb-a2a9-b84e3df63181)
 
-### Movers/Watchlist
-![image](https://github.com/user-attachments/assets/a47750df-c2d8-4028-965f-c9d87a4efea5)
-![image](https://github.com/user-attachments/assets/53906129-3ac3-4d05-98f8-7bcc375dd384)
+### Trending
+![image](https://github.com/user-attachments/assets/8a80509f-ac24-49fb-8c40-b98cb4030ca5)
+![image](https://github.com/user-attachments/assets/674b8559-0d7c-4db0-8bc4-a5ddc0bc62e5)
 
 ### News 
-![image](https://github.com/user-attachments/assets/f1dfa976-8a61-4a83-9e62-18c1167bff0a)
-![image](https://github.com/user-attachments/assets/d84a5af4-c228-4be3-982d-57c7e1020af7)
+![image](https://github.com/user-attachments/assets/50e32f70-df16-4dcb-9fcf-3e39f9e7b6bd)
+![image](https://github.com/user-attachments/assets/fee59e6b-4041-4e23-838f-7e596d8c4186)
 
 ### Insider Tracking
-![image](https://github.com/user-attachments/assets/df930fe6-d9ea-4db1-8a7f-7a62af792367)
+![image](https://github.com/user-attachments/assets/925c2319-500e-4134-bb08-b2fdf483c775)
+
 
 
