@@ -53,7 +53,7 @@ SM Predictor is a web application that allows users to **fetch stock market data
 - **Balance updates dynamically** based on executed trades.
 - **Live stock price updates** ensure realistic market conditions.
 
-### Top Movers & Losers + Watchlist
+### Trending
 - Tracks the **Top 10 gainers and Top 10 losers** in the stock market.
 - Provides **real-time percentage changes** for the biggest market movers
 - **Sortable list** to analyze daily trends and fluctuations.
