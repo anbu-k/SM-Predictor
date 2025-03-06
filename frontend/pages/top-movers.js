@@ -111,10 +111,12 @@ export default function TopMovers() {
   };
 
   // Sorting function
-  const sortStocks = (stocks) => {
+  const sortStocks = (stocks, isLoser = false) => {
     return [...stocks].sort((a, b) => {
       if (sortCriteria === "price") return b.price - a.price;
-      if (sortCriteria === "change") return b.change - a.change;
+      if (sortCriteria === "change") {
+        return isLoser ? a.change - b.change : b.change - a.change;
+      }
       return a.ticker.localeCompare(b.ticker);
     });
   };
@@ -266,7 +268,7 @@ export default function TopMovers() {
           </tr>
         </thead>
         <tbody>
-          {filterStocks(sortStocks(topLosers)).map((stock, index) => (
+          {filterStocks(sortStocks(topLosers, true)).map((stock, index) => (
             <tr key={index}>
               <td
                 onMouseEnter={(event) => {
@@ -330,7 +332,7 @@ export default function TopMovers() {
       <h2 style={{ marginTop: "40px" }}>⭐ Your Watchlist</h2>
       <table
         style={{
-          width: "70%",
+          width: "80%",
           margin: "auto",
           background: "#222",
           padding: "10px",
@@ -340,14 +342,45 @@ export default function TopMovers() {
           <tr>
             <th>Ticker</th>
             <th>Current Price</th>
-            <th>Change Since Added (%)</th>
-            <th>52W High</th>
-            <th>52W Low</th>
-            <th>Market Trend</th>
-            <th>Next Earnings</th>
-            <th>Dividend Yield</th>
+            <th
+              title="Percentage change since you added it"
+              style={{ cursor: "help" }}
+            >
+              Change Since Added (%)
+            </th>
+            <th
+              title="Highest price in the last 52 weeks"
+              style={{ cursor: "help" }}
+            >
+              52W High
+            </th>
+            <th
+              title="Lowest price in the last 52 weeks"
+              style={{ cursor: "help" }}
+            >
+              52W Low
+            </th>
+            <th
+              title="Current market trend: Uptrend or Downtrend"
+              style={{ cursor: "help" }}
+            >
+              Market Trend
+            </th>
+            <th
+              title="Next scheduled earnings report date"
+              style={{ cursor: "help" }}
+            >
+              Next Earnings
+            </th>
+            <th
+              title="Annual dividend yield as a percentage of stock price"
+              style={{ cursor: "help" }}
+            >
+              Dividend Yield
+            </th>
           </tr>
         </thead>
+
         <tbody>
           {watchlist.map((ticker, index) => {
             const stock = stockDetails[ticker] || {};

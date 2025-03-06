@@ -4,5 +4,5 @@
   "/_document": "pages/_document.js",
   "/top-movers": "pages/top-movers.js",
   "/news": "pages/news.js",
-  "/disclaimer": "pages/disclaimer.js"
+  "/trading": "pages/trading.js"
 }
