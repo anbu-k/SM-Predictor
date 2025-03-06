@@ -21,7 +21,7 @@ TIME_PERIODS = {
     "1d": "1d"
 }
 
-DEFAULT_PERIOD = "1y"  # Default to 1 year if no period is provided
+DEFAULT_PERIOD = "1y"  # Defaults to 1 year 
 
 def fetch_stock_data(ticker: str, period: str):
     """Fetch stock data from yfinance for a given ticker and period."""
@@ -90,7 +90,7 @@ def get_insider_trades(ticker: str):
     query_payload = {
         "query": f'ticker:"{ticker}" AND formType:("3", "4", "5")',
         "from": "0",
-        "size": "10",  # Get the 10 most recent insider trades
+        "size": "10",  # Gets the 10 most recent insider trades
         "sort": [{"filedAt": {"order": "desc"}}]
     }
 
@@ -101,12 +101,11 @@ def get_insider_trades(ticker: str):
         data = response.json()
         transactions = data.get("filings", [])
 
-        # Format data for frontend display
         formatted_trades = []
         for trade in transactions:
             formatted_trades.append({
-                "ownerName": trade.get("entities", [{}])[0].get("companyName", "N/A"),  # Name of insider
-                "transactionDate": trade.get("filedAt", "N/A"),  # Filing date
+                "ownerName": trade.get("entities", [{}])[0].get("companyName", "N/A"),  
+                "transactionDate": trade.get("filedAt", "N/A"),  
                 "transactionType": trade.get("formType", "N/A"),  # Type of transaction (Form 3, 4, or 5)
                 "linkToFiling": trade.get("linkToFilingDetails", "N/A"),  # SEC filing link
             })
