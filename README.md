@@ -72,7 +72,7 @@ SM Predictor is a web application that allows users to **fetch stock market data
 
 ### Movers/Watchlist
 ![image](https://github.com/user-attachments/assets/a47750df-c2d8-4028-965f-c9d87a4efea5)
-![image](https://github.com/user-attachments/assets/77b77d79-3be4-462c-a9c9-6320d772162b)
+![image](https://github.com/user-attachments/assets/53906129-3ac3-4d05-98f8-7bcc375dd384)
 
 ### News 
 ![image](https://github.com/user-attachments/assets/f1dfa976-8a61-4a83-9e62-18c1167bff0a)
