@@ -42,7 +42,7 @@ export default function TopMovers() {
   // Loads watchlist from localStorage
   useEffect(() => {
     const savedWatchlist = JSON.parse(localStorage.getItem("watchlist")) || [];
-    setWatchlist(savedWatchlist);
+    setWatchlist(Array.isArray(savedWatchlist) ? savedWatchlist : []);
   }, []);
 
   useEffect(() => {
