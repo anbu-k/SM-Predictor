@@ -13,7 +13,6 @@ SM Predictor is a web application that allows users to **fetch stock market data
  - python -m backend.models.train
 
 **Run the Backend Server**
- - cd backend
  - uvicorn backend.main:app --reload
  - The API will be accessible at: http://127.0.0.1:8000/
 
