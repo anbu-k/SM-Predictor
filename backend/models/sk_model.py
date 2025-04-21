@@ -17,28 +17,27 @@ class StockPredictor:
         
     def get_stock_data(self, ticker, period="1y"):
         """Fetch stock data and create technical indicators"""
-        stock = yf.Ticker(ticker)
-        df = stock.history(period=period)
-        
-        # Calculate technical indicators
-        df['MA5'] = df['Close'].rolling(window=5).mean()
-        df['MA20'] = df['Close'].rolling(window=20).mean()
-        df['RSI'] = self.calculate_rsi(df['Close'])
-        df['MACD'] = self.calculate_macd(df['Close'])
-        df['Volatility'] = df['Close'].rolling(window=20).std()
-        df['Price_Change'] = df['Close'].pct_change()
-        
-        # Additional indicators
-        df['Bollinger_Upper'], df['Bollinger_Lower'] = self.calculate_bollinger_bands(df['Close'])
-        df['ATR'] = self.calculate_atr(df)
-        
-        # Create target variable (next day's price)
-        df['Target'] = df['Close'].shift(-1)
-        
-        # Drop any rows with NaN values
-        df = df.dropna()
-        
-        return df
+        try:
+            stock = yf.Ticker(ticker)
+            df = stock.history(period=period)
+            if df.empty:
+                raise ValueError(f"No data found for {ticker}")
+            
+            # Calculate indicators
+            df['MA5'] = df['Close'].rolling(window=5).mean()
+            df['MA20'] = df['Close'].rolling(window=20).mean()
+            df['RSI'] = self.calculate_rsi(df['Close'])
+            df['MACD'] = self.calculate_macd(df['Close'])
+            df['Volatility'] = df['Close'].rolling(window=20).std()
+            df['Price_Change'] = df['Close'].pct_change()
+            df['Bollinger_Upper'], df['Bollinger_Lower'] = self.calculate_bollinger_bands(df['Close'])
+            df['ATR'] = self.calculate_atr(df)
+            df['Target'] = df['Close'].shift(-1)
+            
+            return df.dropna()
+        except Exception as e:
+            logging.error(f"Failed to fetch data for {ticker}: {str(e)}")
+            raise # Re-Raise to let the caller handle it
     
     def calculate_rsi(self, prices, period=14):
         """Calculate Relative Strength Index"""

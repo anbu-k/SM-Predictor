@@ -2,7 +2,6 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/predictor": "pages/predictor.js",
-  "/top-movers": "pages/top-movers.js",
-  "/trading": "pages/trading.js"
+  "/": "pages/index.js",
+  "/predictor": "pages/predictor.js"
 }
